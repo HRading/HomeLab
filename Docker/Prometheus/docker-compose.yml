@@ -1,0 +1,43 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    environment:
+      - TZ=Europe/Copenhagen
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./rules.yml:/etc/prometheus/rules.yml"
+    networks:
+      - localprom
+    ports:
+      - 9090:9090
+  node-exporter:
+    image: prom/node-exporter
+    environment:
+      - TZ=Europe/Copenhagen
+    networks:
+      - localprom
+    ports:
+      - 9100:9100
+  alert-manager:
+    image: prom/alertmanager
+    environment:
+      - TZ=Europe/Copenhagen
+    volumes:
+      - "./alertmanager.yml:/alertmanager/alertmanager.yml"
+    networks:
+      - localprom
+    ports:
+      - 9093:9093
+  grafana:
+    image: grafana/grafana
+    environment:
+      - TZ=Europe/Copenhagen
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning
+    networks:
+      - localprom
+    ports:
+      - 3000:3000
+networks:
+  localprom:
+    driver: bridge
